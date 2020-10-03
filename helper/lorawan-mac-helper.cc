@@ -84,7 +84,7 @@ LorawanMacHelper::Create (Ptr<Node> node, Ptr<NetDevice> device) const
   if (m_deviceType == ED_A && m_addrGen != 0)
     {
       mac->GetObject<ClassAEndDeviceLorawanMac> ()->SetDeviceAddress (m_addrGen->NextAddress ());
-      mac->GetObject<ClassAEndDeviceLorawanMac> ()->SetRetransMax (retransMax);
+      // mac->GetObject<ClassAEndDeviceLorawanMac> ()->SetRetransMax (retransMax);
     }
 
   // Add a basic list of channels based on the region where the device is

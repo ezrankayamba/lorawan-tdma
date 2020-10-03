@@ -15,6 +15,7 @@ namespace ns3 {
 namespace lorawan {
 struct TDMAParams {
 	uint16_t interval;
+  uint8_t deviceType;
 };
 class TDMASender : public Application
 {
@@ -24,9 +25,10 @@ public:
   ~TDMASender ();
 
   static TypeId GetTypeId (void);
+  
 
   void ScheduleReach(void);
-
+  bool Receive (Ptr<NetDevice> loraNetDevice, Ptr<const Packet> packet, uint16_t protocol, const Address& sender);
   /**
    * Send a packet using the LoraNetDevice's Send method.
    */
@@ -53,6 +55,7 @@ private:
   double toa;
   tm startTime;
   uint16_t m_interval;
+  uint8_t deviceType;
 
 
   /**

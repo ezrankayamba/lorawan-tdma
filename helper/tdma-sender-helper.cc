@@ -8,6 +8,7 @@
 #include "ns3/trace-source-accessor.h"
 #include "ns3/simulator.h"
 #include "ns3/log.h"
+#include "ns3/lora-net-device.h"
 
 namespace ns3 {
 
@@ -56,6 +57,10 @@ Ptr<Application> TDMASenderHelper::InstallPriv(Ptr<Node> node) const {
 	app->SetTDMAParams(tdma_params);
 	app->SetNode(node);
 	node->AddApplication(app);
+
+	//Receive Uplink packets from MAC Layer and deliver to Application
+	Ptr<LoraNetDevice> loraNetDevice = node->GetDevice(0)->GetObject<LoraNetDevice> ();
+	loraNetDevice->SetReceiveCallback (MakeCallback(&TDMASender::Receive, app));
 
 	return app;
 }
