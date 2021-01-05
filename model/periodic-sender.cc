@@ -137,17 +137,14 @@ PeriodicSender::StartApplication (void)
     {
       // Assumes there's only one device
       Ptr<LoraNetDevice> loraNetDevice = m_node->GetDevice (0)->GetObject<LoraNetDevice> ();
-
       m_mac = loraNetDevice->GetMac ();
       NS_ASSERT (m_mac != 0);
     }
 
   // Schedule the next SendPacket event
   Simulator::Cancel (m_sendEvent);
-  NS_LOG_DEBUG ("Starting up application with a first event with a " <<
-                m_initialDelay.GetSeconds () << " seconds delay");
-  m_sendEvent = Simulator::Schedule (m_initialDelay,
-                                     &PeriodicSender::SendPacket, this);
+  NS_LOG_DEBUG ("Starting up application with a first event with a " << m_initialDelay.GetSeconds () << " seconds delay");
+  m_sendEvent = Simulator::Schedule (m_initialDelay, &PeriodicSender::SendPacket, this);
   NS_LOG_DEBUG ("Event Id: " << m_sendEvent.GetUid ());
 }
 

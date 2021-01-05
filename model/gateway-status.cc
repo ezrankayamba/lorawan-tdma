@@ -98,14 +98,14 @@ GatewayStatus::IsAvailableForTransmission (double frequency)
   // Check that the gateway was not already "booked"
   if (m_nextTransmissionTime > Simulator::Now () - MilliSeconds (1))
     {
-      NS_LOG_INFO ("This gateway is already booked for a transmission");
+      NS_LOG_INFO ("[NOT]: This gateway is already booked for a transmission");
       return false;
     }
 
   // Check that the gateway is not already in TX mode
   if (m_gatewayMac->IsTransmitting ())
     {
-      NS_LOG_INFO ("This gateway is currently transmitting");
+      NS_LOG_INFO ("[NOT]: This gateway is currently transmitting");
       return false;
     }
 
@@ -113,9 +113,7 @@ GatewayStatus::IsAvailableForTransmission (double frequency)
   Time waitingTime = m_gatewayMac->GetWaitingTime (frequency);
   if (waitingTime > Seconds (0))
     {
-      NS_LOG_INFO ("Gateway cannot be used because of duty cycle");
-      NS_LOG_INFO ("Waiting time at current GW: " << waitingTime.GetSeconds ()
-                                                  << " seconds");
+      NS_LOG_INFO ("[NOT]: Gateway cannot be used because of duty cycle. Waiting time at current GW: "<< waitingTime.GetSeconds () << " seconds");
 
       return false;
     }

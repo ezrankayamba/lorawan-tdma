@@ -56,8 +56,7 @@ SimpleGatewayLoraPhy::~SimpleGatewayLoraPhy ()
 }
 
 void
-SimpleGatewayLoraPhy::Send (Ptr<Packet> packet, LoraTxParameters txParams,
-                            double frequencyMHz, double txPowerDbm)
+SimpleGatewayLoraPhy::Send (Ptr<Packet> packet, LoraTxParameters txParams, double frequencyMHz, double txPowerDbm)
 {
   NS_LOG_FUNCTION (this << packet << frequencyMHz << txPowerDbm);
 
@@ -99,6 +98,7 @@ SimpleGatewayLoraPhy::Send (Ptr<Packet> packet, LoraTxParameters txParams,
     }
 
   // Send the packet in the channel
+  NS_LOG_INFO("SF: " << txParams.sf);
   m_channel->Send (this, packet, txPowerDbm, txParams, duration, frequencyMHz);
 
   Simulator::Schedule (duration, &SimpleGatewayLoraPhy::TxFinished, this, packet);

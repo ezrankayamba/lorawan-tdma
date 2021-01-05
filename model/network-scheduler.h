@@ -63,6 +63,8 @@ private:
   TracedCallback<Ptr<const Packet> > m_receiveWindowOpened;
   Ptr<NetworkStatus> m_status;
   Ptr<NetworkController> m_controller;
+  uint64_t m_rtc;
+  uint64_t m_dev_id;
 };
 
 } /* namespace ns3 */

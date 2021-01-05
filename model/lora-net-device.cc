@@ -106,6 +106,7 @@ LoraNetDevice::CompleteConfig (void)
     }
 
   m_mac->SetPhy (m_phy);
+  m_mac->SetNodeId(m_node->GetId());
   m_configComplete = true;
 }
 

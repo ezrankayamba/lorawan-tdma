@@ -93,9 +93,7 @@ SimpleEndDeviceLoraPhy::Send (Ptr<Packet> packet, LoraTxParameters txParams,
   // STANDBY mode.
   if (!m_txFinishedCallback.IsNull ())
     {
-      Simulator::Schedule (duration + NanoSeconds (10),
-                           &SimpleEndDeviceLoraPhy::m_txFinishedCallback, this,
-                           packet);
+      Simulator::Schedule (duration + NanoSeconds (10), &SimpleEndDeviceLoraPhy::m_txFinishedCallback, this, packet);
     }
 
 
