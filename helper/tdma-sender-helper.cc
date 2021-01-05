@@ -61,7 +61,6 @@ Ptr<Application> TDMASenderHelper::InstallPriv(Ptr<Node> node) const {
 	//Receive Uplink packets from MAC Layer and deliver to Application
 	Ptr<LoraNetDevice> loraNetDevice = node->GetDevice(0)->GetObject<LoraNetDevice> ();
 	loraNetDevice->SetReceiveCallback (MakeCallback(&TDMASender::Receive, app));
-
 	return app;
 }
 
