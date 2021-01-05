@@ -31,7 +31,8 @@ using namespace lorawan;
 
 NS_LOG_COMPONENT_DEFINE("EvaNetworkTDMAv4");
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	uint16_t nDevices = 2;
 	uint16_t nPeriods = 20;
 	uint16_t nHours = 2;
@@ -47,26 +48,26 @@ int main(int argc, char *argv[]) {
 
 	// Set up logging
 	LogComponentEnable("EvaNetworkTDMAv4", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LoraChannel", LOG_LEVEL_INFO);
+	//  LogComponentEnable ("LoraChannel", LOG_LEVEL_INFO);
 	LogComponentEnable("LoraPhy", LOG_LEVEL_ALL);
-//  LogComponentEnable ("EndDeviceLoraPhy", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("EndDeviceLoraPhy", LOG_LEVEL_ALL);
 	LogComponentEnable("GatewayLoraPhy", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LoraInterferenceHelper", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LorawanMac", LOG_LEVEL_ALL);
-//  LogComponentEnable ("EndDeviceLorawanMac", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LoraInterferenceHelper", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LorawanMac", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("EndDeviceLorawanMac", LOG_LEVEL_ALL);
 	LogComponentEnable("ClassAEndDeviceLorawanMac", LOG_LEVEL_ALL);
 	LogComponentEnable("GatewayLorawanMac", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LogicalLoraChannelHelper", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LogicalLoraChannel", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LoraHelper", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LoraPhyHelper", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LorawanMacHelper", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LorawanMacHeader", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LoraFrameHeader", LOG_LEVEL_ALL);
-//  LogComponentEnable ("Names", LOG_LEVEL_ALL);
-//  LogComponentEnable ("FileHelper", LOG_LEVEL_ALL);
-//  LogComponentEnable ("Config", LOG_LEVEL_ALL);
-//  LogComponentEnable ("LoraPacketTracker", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LogicalLoraChannelHelper", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LogicalLoraChannel", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LoraHelper", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LoraPhyHelper", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LorawanMacHelper", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LorawanMacHeader", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LoraFrameHeader", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("Names", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("FileHelper", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("Config", LOG_LEVEL_ALL);
+	//  LogComponentEnable ("LoraPacketTracker", LOG_LEVEL_ALL);
 	LogComponentEnable("TDMASenderHelper", LOG_LEVEL_ALL);
 	LogComponentEnable("TDMASender", LOG_LEVEL_ALL);
 	LogComponentEnableAll(LOG_PREFIX_FUNC);
@@ -81,12 +82,12 @@ int main(int argc, char *argv[]) {
 
 	// Create the lora channel object
 	Ptr<LogDistancePropagationLossModel> loss = CreateObject<
-			LogDistancePropagationLossModel>();
+		LogDistancePropagationLossModel>();
 	loss->SetPathLossExponent(3.76);
 	loss->SetReference(1, 7.7);
 
 	Ptr<PropagationDelayModel> delay = CreateObject<
-			ConstantSpeedPropagationDelayModel>();
+		ConstantSpeedPropagationDelayModel>();
 
 	Ptr<LoraChannel> channel = CreateObject<LoraChannel>(loss, delay);
 
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
 
 	MobilityHelper mobility;
 	Ptr<ListPositionAllocator> allocator =
-			CreateObject<ListPositionAllocator>();
+		CreateObject<ListPositionAllocator>();
 	allocator->Add(Vector(0, 0, 0));
 	mobility.SetPositionAllocator(allocator);
 	mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -132,7 +133,7 @@ int main(int argc, char *argv[]) {
 	macHelper.SetDeviceType(LorawanMacHelper::ED_A);
 	macHelper.SetRetransMax(0); //0=Disable
 	NetDeviceContainer endDevicesNetDevices = helper.Install(phyHelper,
-			macHelper, endDevices);
+															 macHelper, endDevices);
 
 	/*********************
 	 *  Create Gateways  *
@@ -168,13 +169,13 @@ int main(int argc, char *argv[]) {
 	// Activate printing of ED MAC parameters
 	Time stateSamplePeriod = Seconds(0.040);
 	helper.EnablePeriodicDeviceStatusPrinting(endDevices, gateways,
-			"nodeData.txt", stateSamplePeriod);
+											  "nodeData.txt", stateSamplePeriod);
 	helper.EnablePeriodicPhyPerformancePrinting(gateways, "phyPerformance.txt",
-			stateSamplePeriod);
+												stateSamplePeriod);
 	helper.EnablePeriodicGlobalPerformancePrinting("globalPerformance.txt",
-			stateSamplePeriod);
+												   stateSamplePeriod);
 
-	LoraPacketTracker& tracker = helper.GetPacketTracker();
+	LoraPacketTracker &tracker = helper.GetPacketTracker();
 
 	/************************
 	 * Install Energy Model *
@@ -184,8 +185,7 @@ int main(int argc, char *argv[]) {
 	LoraRadioEnergyModelHelper radioEnergyHelper;
 
 	// configure energy source
-	basicSourceHelper.Set("BasicEnergySourceInitialEnergyJ",
-			DoubleValue(10000)); // Energy in J
+	basicSourceHelper.Set("BasicEnergySourceInitialEnergyJ", DoubleValue(10000)); // Energy in J
 	basicSourceHelper.Set("BasicEnergySupplyVoltageV", DoubleValue(3.3));
 
 	radioEnergyHelper.Set("StandbyCurrentA", DoubleValue(0.0014));
@@ -193,12 +193,12 @@ int main(int argc, char *argv[]) {
 	radioEnergyHelper.Set("SleepCurrentA", DoubleValue(0.0000015));
 	radioEnergyHelper.Set("RxCurrentA", DoubleValue(0.0112));
 
-	radioEnergyHelper.SetTxCurrentModel("ns3::ConstantLoraTxCurrentModel",
-			"TxCurrent", DoubleValue(0.028));
+	radioEnergyHelper.SetTxCurrentModel("ns3::ConstantLoraTxCurrentModel",										"TxCurrent", DoubleValue(0.028));
 
 	// install source on EDs' nodes
 	EnergySourceContainer sources = basicSourceHelper.Install(endDevices);
-	for (uint16_t i = 0; i < nDevices; i++) {
+	for (uint16_t i = 0; i < nDevices; i++)
+	{
 		char name[40];
 		sprintf(name, "/Names/EnergySourceTDMA%04d", (i + 1));
 		Names::Add(name, sources.Get(i));
@@ -206,14 +206,15 @@ int main(int argc, char *argv[]) {
 
 	// install device model
 	DeviceEnergyModelContainer deviceModels = radioEnergyHelper.Install(
-			endDevicesNetDevices, sources);
+		endDevicesNetDevices, sources);
 
 	/**************
 	 * Get output *
 	 **************/
 
 	FileHelper fileHelpers[nDevices];
-	for (uint16_t i = 0; i < nDevices; i++) {
+	for (uint16_t i = 0; i < nDevices; i++)
+	{
 		char name[60];
 		char fname[40];
 		sprintf(name, "/Names/EnergySourceTDMA%04d/RemainingEnergy", (i + 1));
@@ -233,8 +234,9 @@ int main(int argc, char *argv[]) {
 	Simulator::Destroy();
 
 	std::cout
-			<< tracker.CountMacPacketsGlobally(Seconds(1200 * (nPeriods - 2)),
-					Seconds(1200 * (nPeriods - 1))) << std::endl;
+		<< tracker.CountMacPacketsGlobally(Seconds(1200 * (nPeriods - 2)),
+										   Seconds(1200 * (nPeriods - 1)))
+		<< std::endl;
 
 	return 0;
 }

@@ -207,13 +207,10 @@ LogicalLoraChannelHelper::GetWaitingTime (Ptr<LogicalLoraChannel> channel)
   NS_LOG_FUNCTION (this << channel);
 
   // SubBand waiting time
-  Time subBandWaitingTime = GetSubBandFromChannel (channel)->
-    GetNextTransmissionTime () -
-    Simulator::Now ();
+  Time subBandWaitingTime = GetSubBandFromChannel (channel)-> GetNextTransmissionTime () - Simulator::Now ();
 
   // Handle case in which waiting time is negative
-  subBandWaitingTime = Seconds (std::max (subBandWaitingTime.GetSeconds (),
-                                          double(0)));
+  subBandWaitingTime = Seconds (std::max (subBandWaitingTime.GetSeconds (), double(0)));
 
   NS_LOG_DEBUG ("Waiting time: " << subBandWaitingTime.GetSeconds ());
 

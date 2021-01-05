@@ -142,12 +142,14 @@ NetworkStatus::GetBestGatewayForDevice (LoraDeviceAddress deviceAddress, int win
       NS_ABORT_MSG ("Invalid window value");
     }
 
+    
+
   // Get the list of gateways that this device can reach
   // NOTE: At this point, we could also take into account the whole network to
   // identify the best gateway according to various metrics. For now, we just
   // ask the EndDeviceStatus to pick the best gateway for us via its method.
   std::map<double, Address> gwAddresses = edStatus->GetPowerGatewayMap ();
-
+  NS_LOG_INFO("Reply Frequency: " << replyFrequency << ", List size: " << gwAddresses.size() );
   // By iterating on the map in reverse, we go from the 'best'
   // gateway, i.e. the one with the highest received power, to the
   // worst.
@@ -159,6 +161,8 @@ NetworkStatus::GetBestGatewayForDevice (LoraDeviceAddress deviceAddress, int win
         {
           bestGwAddress = it->second;
           break;
+        }else{
+          NS_LOG_INFO("Gateway not available for Transmission: " << it->second);
         }
     }
 

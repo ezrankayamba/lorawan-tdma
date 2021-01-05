@@ -213,7 +213,6 @@ namespace ns3
    * The RX1DROffset parameter value
    */
       uint8_t m_rx1DrOffset;
-
     }; /* ClassAEndDeviceLorawanMac */
   }    /* namespace lorawan */
 } /* namespace ns3 */

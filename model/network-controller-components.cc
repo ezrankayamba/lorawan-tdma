@@ -66,9 +66,7 @@ ConfirmedMessagesComponent::~ConfirmedMessagesComponent ()
 }
 
 void
-ConfirmedMessagesComponent::OnReceivedPacket (Ptr<const Packet> packet,
-                                              Ptr<EndDeviceStatus> status,
-                                              Ptr<NetworkStatus> networkStatus)
+ConfirmedMessagesComponent::OnReceivedPacket (Ptr<const Packet> packet, Ptr<EndDeviceStatus> status, Ptr<NetworkStatus> networkStatus)
 {
   NS_LOG_FUNCTION (this->GetTypeId () << packet << networkStatus);
 

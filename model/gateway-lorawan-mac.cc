@@ -22,7 +22,10 @@
 #include "ns3/lorawan-mac-header.h"
 #include "ns3/lora-net-device.h"
 #include "ns3/lora-frame-header.h"
+#include "ns3/tdma-rtc-trailer.h"
+#include "ns3/tdma-dev-trailer.h"
 #include "ns3/log.h"
+#include "ns3/string.h"
 
 namespace ns3
 {
@@ -61,14 +64,11 @@ namespace ns3
       // Get DataRate to send this packet with
       LoraTag tag;
       packet->RemovePacketTag(tag);
-      NS_LOG_DEBUG("SF0: " << tag.GetSpreadingFactor());
+      // NS_LOG_DEBUG("SF0: " << tag.GetSpreadingFactor());
       uint8_t dataRate = tag.GetDataRate();
       double frequency = tag.GetFrequency();
-      NS_LOG_DEBUG("DR: " << unsigned(dataRate));
-      NS_LOG_DEBUG("SF: " << unsigned(GetSfFromDataRate(dataRate)));
-      NS_LOG_DEBUG("BW: " << GetBandwidthFromDataRate(dataRate));
-      NS_LOG_DEBUG("Freq: " << frequency << " MHz");
-      
+      NS_LOG_DEBUG("DR: " << unsigned(dataRate) << ", SF: " << unsigned(GetSfFromDataRate(dataRate)) << "BW: " << GetBandwidthFromDataRate(dataRate) << "Freq: " << frequency << " MHz");
+
       packet->AddPacketTag(tag);
 
       // Make sure we can transmit this packet
@@ -92,7 +92,7 @@ namespace ns3
       // Get the duration
       Time duration = m_phy->GetOnAirTime(packet, params);
 
-      NS_LOG_DEBUG("Duration: " << duration.GetSeconds());
+      // NS_LOG_DEBUG("Duration: " << duration.GetSeconds());
 
       // Find the channel with the desired frequency
       double sendingPower = m_channelHelper.GetTxPowerForChannel(CreateObject<LogicalLoraChannel>(frequency));
@@ -115,26 +115,35 @@ namespace ns3
     void
     GatewayLorawanMac::Receive(Ptr<Packet const> packet)
     {
-      NS_LOG_FUNCTION(this << packet);
-
+      
       // Make a copy of the packet to work on
-      Ptr<Packet> packetCopy = packet->Copy();
+      Ptr<Packet> packetCopy = packet->Copy ();
 
       // Only forward the packet if it's uplink
       LorawanMacHeader macHdr;
-      packetCopy->PeekHeader(macHdr);
+      packetCopy->PeekHeader (macHdr);
 
-      if (macHdr.IsUplink())
+      if (macHdr.IsUplink ())
       {
-        m_device->GetObject<LoraNetDevice>()->Receive(packetCopy);
+        Ptr<Packet> devCopy = packet->Copy();
+        TDMADevTrailer devTrl;
+		    devCopy->RemoveTrailer(devTrl);
 
-        NS_LOG_DEBUG("Received packet: " << packet);
+        int64_t ts = this->GetTimestamp();
+        TDMARTCTrailer tsPart;
+        tsPart.SetRTC(ts);
+        tsPart.SetId(devTrl.GetId());//devTrl.GetId()
+        packetCopy->AddTrailer(tsPart);
 
-        m_receivedPacket(packet);
+        m_device->GetObject<LoraNetDevice> ()->Receive (packetCopy);
+
+        NS_LOG_DEBUG ("Received packet: " << packet << ", From DevID: " << devTrl.GetId());
+
+        m_receivedPacket (packet);
       }
       else
       {
-        NS_LOG_DEBUG("Not forwarding downlink message to NetDevice");
+          NS_LOG_DEBUG ("Not forwarding downlink message to NetDevice");
       }
     }
 

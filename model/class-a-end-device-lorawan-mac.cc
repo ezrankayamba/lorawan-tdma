@@ -25,6 +25,7 @@
 #include "ns3/class-a-end-device-lorawan-mac.h"
 #include "ns3/end-device-lorawan-mac.h"
 #include "ns3/end-device-lora-phy.h"
+#include "ns3/tdma-rtc-trailer.h"
 #include "ns3/log.h"
 #include <algorithm>
 
@@ -161,14 +162,17 @@ namespace ns3
         NS_LOG_DEBUG("Frame Header: " << fHdr);
 
         // Determine whether this packet is for us
+        TDMARTCTrailer rtc;
+			  packetCopy->PeekTrailer(rtc);
+        NS_LOG_INFO("Params: " << this->GetNodeId() << ", " << rtc.GetId() << "; " << m_address << ", " << fHdr.GetAddress());
         bool messageForUs = (m_address == fHdr.GetAddress());
 
-        const uint32_t size = packetCopy->GetSize();
-        NS_LOG_INFO("Packet size: " << size);
-        uint8_t buffer[size] = {};
-        packetCopy->CopyData(buffer, size);
-        buffer[size] = 0;
-        NS_LOG_INFO("Data: " << buffer);
+        // const uint32_t size = packetCopy->GetSize();
+        // NS_LOG_INFO("Packet size: " << size);
+        // uint8_t buffer[size] = {};
+        // packetCopy->CopyData(buffer, size);
+        // buffer[size] = 0;
+        // NS_LOG_INFO("Data: " << buffer);
 
         if (messageForUs)
         {
@@ -182,11 +186,10 @@ namespace ns3
           ParseCommands(fHdr);
 
           // TODO Pass the packet up to the NetDevice
+          this->m_rxOkCallback (packet);
 
           // Call the trace source
           m_receivedPacket(packet);
-
-          this->m_rxOkCallback (packetCopy);
         }
         else
         {
@@ -235,7 +238,7 @@ namespace ns3
         }
       }
 
-      m_phy->GetObject<EndDeviceLoraPhy>()->SwitchToSleep();
+      // m_phy->GetObject<EndDeviceLoraPhy>()->SwitchToSleep();
     }
 
     void
@@ -271,13 +274,10 @@ namespace ns3
       NS_LOG_FUNCTION_NOARGS();
 
       // Schedule the opening of the first receive window
-      Simulator::Schedule(m_receiveDelay1,
-                          &ClassAEndDeviceLorawanMac::OpenFirstReceiveWindow, this);
+      Simulator::Schedule(m_receiveDelay1, &ClassAEndDeviceLorawanMac::OpenFirstReceiveWindow, this);
 
       // Schedule the opening of the second receive window
-      m_secondReceiveWindow = Simulator::Schedule(m_receiveDelay2,
-                                                  &ClassAEndDeviceLorawanMac::OpenSecondReceiveWindow,
-                                                  this);
+      m_secondReceiveWindow = Simulator::Schedule(m_receiveDelay2, &ClassAEndDeviceLorawanMac::OpenSecondReceiveWindow, this);
       // // Schedule the opening of the first receive window
       // Simulator::Schedule (m_receiveDelay1,
       //                      &ClassAEndDeviceLorawanMac::OpenFirstReceiveWindow, this);
@@ -287,10 +287,12 @@ namespace ns3
       //                                              &ClassAEndDeviceLorawanMac::OpenSecondReceiveWindow,
       //                                              this);
 
+      //Notify upper layers of TX Finish
+      m_txFinishedCallback(packet);
       // Switch the PHY to sleep
       m_phy->GetObject<EndDeviceLoraPhy>()->SwitchToSleep();
     }
-
+  
     void
     ClassAEndDeviceLorawanMac::OpenFirstReceiveWindow(void)
     {

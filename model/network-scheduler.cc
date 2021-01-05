@@ -1,4 +1,6 @@
 #include "network-scheduler.h"
+#include "ns3/tdma-rtc-trailer.h"
+#include "ns3/tdma-rtc-trailer.h"
 
 namespace ns3
 {
@@ -51,6 +53,11 @@ namespace ns3
       packetCopy->RemoveHeader(receivedFrameHdr);
       uint8_t currentFrameCounter = receivedFrameHdr.GetFCnt();
 
+      TDMARTCTrailer rtc;
+      packetCopy->RemoveTrailer(rtc);
+      m_rtc = rtc.GetRTC();
+      m_dev_id = rtc.GetId();
+
       // Get the saved packet's frame counter
       Ptr<const Packet> savedPacket = m_status->GetEndDeviceStatus(packet)->GetLastReceivedPacketInfo().packet;
       if (savedPacket)
@@ -76,11 +83,7 @@ namespace ns3
       LoraDeviceAddress deviceAddress = receivedFrameHdr.GetAddress();
 
       // Schedule OnReceiveWindowOpportunity event
-      Simulator::Schedule(Seconds(1),
-                          &NetworkScheduler::OnReceiveWindowOpportunity,
-                          this,
-                          deviceAddress,
-                          1); // This will be the first receive window
+      Simulator::Schedule(Seconds(1), &NetworkScheduler::OnReceiveWindowOpportunity, this, deviceAddress, 1); // This will be the first receive window
     }
 
     void
@@ -88,32 +91,28 @@ namespace ns3
     {
       NS_LOG_FUNCTION(deviceAddress);
 
-      NS_LOG_DEBUG("Opening receive window nubmer " << window << " for device " << deviceAddress);
+      NS_LOG_DEBUG("Opening receive window nubmer " << window << " for device " << deviceAddress << ", DevID: " << m_dev_id);
 
       // Check whether we can send a reply to the device, again by using
       // NetworkStatus
       Address gwAddress = m_status->GetBestGatewayForDevice(deviceAddress, window);
 
-      NS_LOG_DEBUG("Found available gateway with address: " << gwAddress);
+      NS_LOG_DEBUG("Found available gateway with address: " << gwAddress <<  "; DevID: " << m_dev_id);
 
       if (gwAddress == Address() && window == 1)
       {
-        NS_LOG_DEBUG("No suitable gateway found.");
+        NS_LOG_DEBUG("No suitable gateway found. DevID: " << m_dev_id);
 
         // No suitable GW was found
         // Schedule OnReceiveWindowOpportunity event
-        Simulator::Schedule(Seconds(1),
-                            &NetworkScheduler::OnReceiveWindowOpportunity,
-                            this,
-                            deviceAddress,
-                            2); // This will be the second receive window
+        Simulator::Schedule(Seconds(1), &NetworkScheduler::OnReceiveWindowOpportunity, this, deviceAddress, 2); // This will be the second receive window
       }
       else if (gwAddress == Address() && window == 2)
       {
         // No suitable GW was found
         // Simply give up.
         NS_LOG_INFO("Giving up on reply: no suitable gateway was found "
-                    << "on the second receive window");
+                    << "on the second receive window. DevID: " << m_dev_id);
 
         // Reset the reply
         // XXX Should we reset it here or keep it for the next opportunity?
@@ -127,14 +126,18 @@ namespace ns3
         // Check whether this device needs a response by querying m_status
         bool needsReply = m_status->NeedsReply(deviceAddress);
 
-        NS_LOG_INFO("Needs reply: " << needsReply);
-
         if (needsReply)
         {
-          NS_LOG_INFO("A reply is needed");
+          NS_LOG_INFO("A reply is needed. DevID: " << m_dev_id);
 
           // Send the reply through that gateway
-          Ptr<Packet> ackPacket = Create<Packet>((const uint8_t *)"Test", 4);
+          Ptr<Packet> ackPacket = Create<Packet>((const uint8_t *)"ACK", 3);
+
+          TDMARTCTrailer tsPart;
+          tsPart.SetRTC(m_rtc);
+          tsPart.SetId(m_dev_id);
+          ackPacket->AddTrailer(tsPart);
+
           m_status->GetEndDeviceStatus(deviceAddress)->SetReplyPayload(ackPacket);
           m_status->SendThroughGateway(m_status->GetReplyForDevice(deviceAddress, window), gwAddress);
 

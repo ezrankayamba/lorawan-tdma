@@ -20,95 +20,116 @@
 
 #include "ns3/forwarder.h"
 #include "ns3/log.h"
+#include "ns3/lorawan-mac-header.h"
+#include "ns3/lora-frame-header.h"
+#include "ns3/tdma-rtc-trailer.h"
 
-namespace ns3 {
-namespace lorawan {
-
-NS_LOG_COMPONENT_DEFINE ("Forwarder");
-
-NS_OBJECT_ENSURE_REGISTERED (Forwarder);
-
-TypeId
-Forwarder::GetTypeId (void)
+namespace ns3
 {
-  static TypeId tid = TypeId ("ns3::Forwarder")
-    .SetParent<Application> ()
-    .AddConstructor<Forwarder> ()
-    .SetGroupName ("lorawan");
-  return tid;
-}
+  namespace lorawan
+  {
 
-Forwarder::Forwarder ()
-{
-  NS_LOG_FUNCTION_NOARGS ();
-}
+    NS_LOG_COMPONENT_DEFINE("Forwarder");
 
-Forwarder::~Forwarder ()
-{
-  NS_LOG_FUNCTION_NOARGS ();
-}
+    NS_OBJECT_ENSURE_REGISTERED(Forwarder);
 
-void
-Forwarder::SetPointToPointNetDevice (Ptr<PointToPointNetDevice>
-                                     pointToPointNetDevice)
-{
-  NS_LOG_FUNCTION (this << pointToPointNetDevice);
+    TypeId
+    Forwarder::GetTypeId(void)
+    {
+      static TypeId tid = TypeId("ns3::Forwarder")
+                              .SetParent<Application>()
+                              .AddConstructor<Forwarder>()
+                              .SetGroupName("lorawan");
+      return tid;
+    }
 
-  m_pointToPointNetDevice = pointToPointNetDevice;
-}
+    Forwarder::Forwarder()
+    {
+      NS_LOG_FUNCTION_NOARGS();
+      NS_LOG_INFO("Forwarder!!! - New");
+    }
 
-void
-Forwarder::SetLoraNetDevice (Ptr<LoraNetDevice> loraNetDevice)
-{
-  NS_LOG_FUNCTION (this << loraNetDevice);
+    Forwarder::~Forwarder()
+    {
+      NS_LOG_FUNCTION_NOARGS();
+    }
 
-  m_loraNetDevice = loraNetDevice;
-}
+    void
+    Forwarder::SetPointToPointNetDevice(Ptr<PointToPointNetDevice>
+                                            pointToPointNetDevice)
+    {
+      NS_LOG_FUNCTION(this << pointToPointNetDevice);
 
-bool
-Forwarder::ReceiveFromLora (Ptr<NetDevice> loraNetDevice, Ptr<const Packet>
-                            packet, uint16_t protocol, const Address& sender)
-{
-  NS_LOG_FUNCTION (this << packet << protocol << sender);
+      m_pointToPointNetDevice = pointToPointNetDevice;
+    }
 
-  Ptr<Packet> packetCopy = packet->Copy ();
+    void
+    Forwarder::SetLoraNetDevice(Ptr<LoraNetDevice> loraNetDevice)
+    {
+      NS_LOG_FUNCTION(this << loraNetDevice);
 
-  m_pointToPointNetDevice->Send (packetCopy,
-                                 m_pointToPointNetDevice->GetBroadcast (),
-                                 0x800);
+      m_loraNetDevice = loraNetDevice;
+    }
 
-  return true;
-}
+    bool
+    Forwarder::ReceiveFromLora(Ptr<NetDevice> loraNetDevice, Ptr<const Packet> packet, uint16_t protocol, const Address &sender)
+    {
+      NS_LOG_FUNCTION(this << packet << protocol << sender);
 
-bool
-Forwarder::ReceiveFromPointToPoint (Ptr<NetDevice> pointToPointNetDevice,
-                                    Ptr<const Packet> packet, uint16_t protocol,
-                                    const Address& sender)
-{
-  NS_LOG_FUNCTION (this << packet << protocol << sender);
+      Ptr<Packet> packetCopy = packet->Copy();
 
-  Ptr<Packet> packetCopy = packet->Copy ();
+      NS_LOG_INFO("Forwarder!!!");
+      // Ptr<Packet> copy = packet->Copy();
+      // LorawanMacHeader mHdr;
+      // copy->RemoveHeader(mHdr);
+      // LoraFrameHeader fHdr;
+      // // fHdr.SetAsDownlink();
+      // copy->RemoveHeader(fHdr);
+      // const uint32_t size = copy->GetSize();
+      // NS_LOG_INFO("Packet size: " << size);
+      // uint8_t buffer[size] = {};
+      // copy->CopyData(buffer, size);
+      // buffer[size] = 0;
+      // NS_LOG_INFO("Data: " << buffer);
 
-  m_loraNetDevice->Send (packetCopy);
+      // TDMARTCTrailer tsPart;
+      // tsPart.SetRTC(258);
+      // packetCopy->AddTrailer(tsPart);
 
-  return true;
-}
+      m_pointToPointNetDevice->Send(packetCopy, m_pointToPointNetDevice->GetBroadcast(), 0x800);
 
-void
-Forwarder::StartApplication (void)
-{
-  NS_LOG_FUNCTION (this);
+      return true;
+    }
 
-  // TODO Make sure we are connected to both needed devices
-}
+    bool
+    Forwarder::ReceiveFromPointToPoint(Ptr<NetDevice> pointToPointNetDevice,
+                                       Ptr<const Packet> packet, uint16_t protocol,
+                                       const Address &sender)
+    {
+      NS_LOG_FUNCTION(this << packet << protocol << sender);
 
-void
-Forwarder::StopApplication (void)
-{
-  NS_LOG_FUNCTION_NOARGS ();
+      Ptr<Packet> packetCopy = packet->Copy();
 
-  // TODO Get rid of callbacks
-}
+      m_loraNetDevice->Send(packetCopy);
 
-}
-}
+      return true;
+    }
+
+    void
+    Forwarder::StartApplication(void)
+    {
+      NS_LOG_FUNCTION(this);
+
+      // TODO Make sure we are connected to both needed devices
+    }
+
+    void
+    Forwarder::StopApplication(void)
+    {
+      NS_LOG_FUNCTION_NOARGS();
+
+      // TODO Get rid of callbacks
+    }
+
+  } // namespace lorawan
+} // namespace ns3
