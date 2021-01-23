@@ -71,23 +71,21 @@ SubBand::SubBand ()
     return m_dutyCycle;
   }
 
-  bool
-  SubBand::BelongsToSubBand (double frequency)
+  bool SubBand::BelongsToSubBand (double frequency)
   {
     return (frequency > m_firstFrequency) && (frequency < m_lastFrequency);
   }
 
-  bool
-  SubBand::BelongsToSubBand (Ptr<LogicalLoraChannel> logicalChannel)
+  bool SubBand::BelongsToSubBand (Ptr<LogicalLoraChannel> logicalChannel)
   {
     double frequency = logicalChannel->GetFrequency ();
     return BelongsToSubBand (frequency);
   }
 
-  void
-  SubBand::SetNextTransmissionTime (Time nextTime)
+  void SubBand::SetNextTransmissionTime (Time nextTime)
   {
     m_nextTransmissionTime = nextTime;
+    NS_LOG_INFO("Next trans time: " << m_nextTransmissionTime.GetMilliSeconds());
   }
 
   Time

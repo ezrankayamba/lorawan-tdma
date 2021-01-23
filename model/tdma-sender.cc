@@ -112,13 +112,13 @@ namespace ns3
 			fmt_date_tm(&ltm, date_str, slot);
 			ltm.tm_sec -= sim_tm;
 
-			double t_slot = node_id * 2; //2 seconds using device ids
-			if(m_syncByDevId == 0){
-				t_slot = 0;
+			double t_slot = 0; 
+			if(m_syncByDevId == 1){
+				t_slot = node_id * 2.5; //2 seconds using device ids
 			}
 			// NS_LOG_INFO(node_id);
 			// t_slot = t_slot * m_node->GetId();
-			NS_LOG_INFO("New window; TOA: " << toa << ", Slot: " << slot << ", Tracker: " << m_tracker << ", Now: " << now_str << ", Next: " << date_str);
+			NS_LOG_INFO("New window; TOA: " << toa << ", Slot: " << t_slot << ", Tracker: " << m_tracker << ", Now: " << now_str << ", Next: " << date_str);
 
 			Simulator::Cancel(m_sendEvent);
 			m_send_window = delta(1);
@@ -146,6 +146,9 @@ namespace ns3
 				m_mac = loraNetDevice->GetMac();
 				NS_ASSERT(m_mac != 0);
 				m_mac->SetTxFinishedCallback(MakeCallback(&TDMASender::TxFinished, this));
+				if(m_syncByDevId == 1){
+					m_mac->GetObject<EndDeviceLorawanMac>()->SetMaxNumberOfTransmissions(2);
+				}
 			}
 
 			// Schedule the next SendPacket event

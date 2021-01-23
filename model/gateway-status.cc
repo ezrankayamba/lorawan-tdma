@@ -113,7 +113,7 @@ GatewayStatus::IsAvailableForTransmission (double frequency)
   Time waitingTime = m_gatewayMac->GetWaitingTime (frequency);
   if (waitingTime > Seconds (0))
     {
-      NS_LOG_INFO ("[NOT]: Gateway cannot be used because of duty cycle. Waiting time at current GW: "<< waitingTime.GetSeconds () << " seconds");
+      NS_LOG_INFO ("[NOT]: Gateway cannot be used because of duty cycle. Waiting time at current GW: "<< waitingTime.GetSeconds () << " seconds, Frequency: " << frequency);
 
       return false;
     }
@@ -125,6 +125,7 @@ void
 GatewayStatus::SetNextTransmissionTime (Time nextTransmissionTime)
 {
   m_nextTransmissionTime = nextTransmissionTime;
+  NS_LOG_INFO("Next trans time: " << m_nextTransmissionTime.GetMilliSeconds());
 }
 }
 }

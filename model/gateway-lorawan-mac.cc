@@ -159,8 +159,7 @@ namespace ns3
       NS_LOG_FUNCTION_NOARGS();
     }
 
-    Time
-    GatewayLorawanMac::GetWaitingTime(double frequency)
+    Time GatewayLorawanMac::GetWaitingTime(double frequency)
     {
       NS_LOG_FUNCTION_NOARGS();
 

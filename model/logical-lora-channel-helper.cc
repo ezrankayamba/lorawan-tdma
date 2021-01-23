@@ -89,15 +89,12 @@ LogicalLoraChannelHelper::GetEnabledChannelList (void)
   return channels;
 }
 
-Ptr<SubBand>
-LogicalLoraChannelHelper::GetSubBandFromChannel (Ptr<LogicalLoraChannel>
-                                                 channel)
+Ptr<SubBand> LogicalLoraChannelHelper::GetSubBandFromChannel (Ptr<LogicalLoraChannel> channel)
 {
   return GetSubBandFromFrequency (channel->GetFrequency ());
 }
 
-Ptr<SubBand>
-LogicalLoraChannelHelper::GetSubBandFromFrequency (double frequency)
+Ptr<SubBand> LogicalLoraChannelHelper::GetSubBandFromFrequency (double frequency)
 {
   // Get the SubBand this frequency belongs to
   std::list< Ptr< SubBand > >::iterator it;
@@ -201,8 +198,7 @@ LogicalLoraChannelHelper::GetAggregatedWaitingTime (void)
   return aggregatedWaitingTime;
 }
 
-Time
-LogicalLoraChannelHelper::GetWaitingTime (Ptr<LogicalLoraChannel> channel)
+Time LogicalLoraChannelHelper::GetWaitingTime (Ptr<LogicalLoraChannel> channel)
 {
   NS_LOG_FUNCTION (this << channel);
 
@@ -217,9 +213,7 @@ LogicalLoraChannelHelper::GetWaitingTime (Ptr<LogicalLoraChannel> channel)
   return subBandWaitingTime;
 }
 
-void
-LogicalLoraChannelHelper::AddEvent (Time duration,
-                                    Ptr<LogicalLoraChannel> channel)
+void LogicalLoraChannelHelper::AddEvent (Time duration, Ptr<LogicalLoraChannel> channel)
 {
   NS_LOG_FUNCTION (this << duration << channel);
 
@@ -229,20 +223,16 @@ LogicalLoraChannelHelper::AddEvent (Time duration,
   double timeOnAir = duration.GetSeconds ();
 
   // Computation of necessary waiting time on this sub-band
-  subBand->SetNextTransmissionTime (Simulator::Now () + Seconds
-                                      (timeOnAir / dutyCycle - timeOnAir));
+  subBand->SetNextTransmissionTime (Simulator::Now () + Seconds (timeOnAir / dutyCycle - timeOnAir));
 
   // Computation of necessary aggregate waiting time
-  m_nextAggregatedTransmissionTime = Simulator::Now () + Seconds
-      (timeOnAir / m_aggregatedDutyCycle - timeOnAir);
+  m_nextAggregatedTransmissionTime = Simulator::Now () + Seconds (timeOnAir / m_aggregatedDutyCycle - timeOnAir);
 
   NS_LOG_DEBUG ("Time on air: " << timeOnAir);
   NS_LOG_DEBUG ("m_aggregatedDutyCycle: " << m_aggregatedDutyCycle);
   NS_LOG_DEBUG ("Current time: " << Simulator::Now ().GetSeconds ());
-  NS_LOG_DEBUG ("Next transmission on this sub-band allowed at time: " <<
-                (subBand->GetNextTransmissionTime ()).GetSeconds ());
-  NS_LOG_DEBUG ("Next aggregated transmission allowed at time " <<
-                m_nextAggregatedTransmissionTime.GetSeconds ());
+  NS_LOG_DEBUG ("Next transmission on this sub-band allowed at time: " << (subBand->GetNextTransmissionTime ()).GetSeconds ());
+  NS_LOG_DEBUG ("Next aggregated transmission allowed at time " << m_nextAggregatedTransmissionTime.GetSeconds ());
 }
 
 double
