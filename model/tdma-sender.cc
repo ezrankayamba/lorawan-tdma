@@ -147,7 +147,7 @@ namespace ns3
 				NS_ASSERT(m_mac != 0);
 				m_mac->SetTxFinishedCallback(MakeCallback(&TDMASender::TxFinished, this));
 				if(m_syncByDevId == 1){
-					m_mac->GetObject<EndDeviceLorawanMac>()->SetMaxNumberOfTransmissions(2);
+					m_mac->GetObject<EndDeviceLorawanMac>()->SetMaxNumberOfTransmissions(1);
 				}
 			}
 

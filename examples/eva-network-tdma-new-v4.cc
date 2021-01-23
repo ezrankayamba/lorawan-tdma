@@ -134,9 +134,21 @@ int main(int argc, char *argv[])
 	NS_LOG_INFO("Setting up helpers...");
 
 	MobilityHelper mobility;
-	Ptr<ListPositionAllocator> allocator = CreateObject<ListPositionAllocator>();
-	allocator->Add(Vector(0, 0, 0));
-	mobility.SetPositionAllocator(allocator);
+	// Ptr<ListPositionAllocator> allocator = CreateObject<ListPositionAllocator>();
+	// u_int16_t dist=1; //5 metres apart
+	// for (int i = 1; i <= nDevices; i++) 
+	// {
+	// 	allocator->Add(Vector(i * dist, 0, 0));
+	// }
+	// allocator->Add(Vector(0, 0, 0)); // Gateway
+	// mobility.SetPositionAllocator(allocator);
+	mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+                                 "MinX", DoubleValue(-100.0),
+                                 "MinY", DoubleValue(-100.0),
+                                 "DeltaX", DoubleValue(5.0),
+                                 "DeltaY", DoubleValue(20.0),
+                                 "GridWidth", UintegerValue(20),
+                                 "LayoutType", StringValue("RowFirst"));
 	mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
 	// Create the LoraPhyHelper
